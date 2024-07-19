@@ -325,7 +325,7 @@ internal object ContributesSubcomponentCodeGen : AnvilApplicabilityChecker {
         )
       }
 
-      val functions = componentInterface.functions
+      val functions = componentInterface.memberFunctions
         .filter { it.returnType().asClassReference() == this }
 
       if (functions.size >= 2) {
@@ -378,7 +378,7 @@ internal object ContributesSubcomponentCodeGen : AnvilApplicabilityChecker {
         )
       }
 
-      val functions = factory.functions
+      val functions = factory.memberFunctions
         .let { functions ->
           if (factory.isInterface()) {
             functions
