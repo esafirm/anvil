@@ -333,9 +333,16 @@ internal class ContributesSubcomponentHandlerGenerator(
           )
         }
 
+        val superTypes by lazy {
+          contribution.clazz.directSuperTypeReferences()
+            .map { it.asClassReference() }
+        }
         val createComponentFunctions = factory.memberFunctions
           .filter { it.isAbstract() }
-          .filter { it.returnType().asClassReference().fqName == contributionFqName }
+          .filter {
+            val returnType = it.returnType().asClassReference()
+            returnType.fqName == contributionFqName || superTypes.any { s -> s == returnType }
+          }
 
         if (createComponentFunctions.size != 1) {
           throw AnvilCompilationExceptionClassReference(
