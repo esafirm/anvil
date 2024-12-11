@@ -406,17 +406,13 @@ internal class KspContributesSubcomponentHandlerSymbolProcessor(
                 function.asMemberOf(implementingType).returnTypeOrNull()
               }
 
-            val returnType = returnTypeToCheck?.resolveKSClassDeclaration()
-            if (returnType?.toClassName() == contributionClassName) {
-              return@filter true
+            if (returnTypeToCheck != null) {
+              val returnTypeClassName = returnTypeToCheck.resolveKSClassDeclaration()?.toClassName()
+              returnTypeClassName == contributionClassName
+                || returnTypeToCheck.isAssignableFrom(contribution.clazz.asType(emptyList()))
+            } else {
+              false
             }
-
-            val isReturningSuperType = returnType != null && contribution.clazz.superTypes.any {
-              it.resolve().resolveKSClassDeclaration() == returnType
-            }
-            if (isReturningSuperType) return@filter true
-
-            false
           }
           .toList()
 
