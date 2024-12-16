@@ -88,26 +88,7 @@ public sealed class ClassReference : Comparable<ClassReference>, AnnotatedRefere
       .flatMap { it.asClassReference().memberFunctions }
   }
 
-  @Deprecated(
-    "renamed to `declaredMemberProperties`.  \n" +
-      "Use `memberProperties` to include inherited properties.",
-    replaceWith = ReplaceWith("declaredMemberProperties"),
-  )
   public abstract val properties: List<MemberPropertyReference>
-
-  /**
-   * All properties that are declared in this class, including overrides.
-   * This list does not include inherited properties that are not overridden by this class.
-   */
-  public abstract val declaredMemberProperties: List<MemberPropertyReference>
-
-  /**
-   * All properties declared in this class or any of its super-types.
-   */
-  public val memberProperties: List<MemberPropertyReference> by lazy(NONE) {
-    declaredMemberProperties + directSuperTypeReferences()
-      .flatMap { it.asClassReference().memberProperties }
-  }
 
   public abstract val typeParameters: List<TypeParameterReference>
 
@@ -205,13 +186,7 @@ public sealed class ClassReference : Comparable<ClassReference>, AnnotatedRefere
       clazz.annotationEntries.map { it.toAnnotationReference(this, module) }
     }
 
-    @Deprecated(
-      "renamed to `declaredMemberProperties`.  \nUse `memberProperties` to include inherited properties.",
-      replaceWith = ReplaceWith("declaredMemberProperties"),
-    )
-    override val properties: List<MemberPropertyReference.Psi> get() = declaredMemberProperties
-
-    override val declaredMemberProperties: List<MemberPropertyReference.Psi> by lazy(NONE) {
+    override val properties: List<MemberPropertyReference.Psi> by lazy(NONE) {
       buildList {
         // Order kind of matters here, since the Descriptor APIs will list body/member properties
         // before the constructor properties.
@@ -333,14 +308,7 @@ public sealed class ClassReference : Comparable<ClassReference>, AnnotatedRefere
       clazz.annotations.map { it.toAnnotationReference(this, module) }
     }
 
-    @Deprecated(
-      "renamed to `declaredMemberProperties`.  \nUse `memberProperties` to include inherited properties.",
-      replaceWith = ReplaceWith("declaredMemberProperties"),
-    )
-    override val properties: List<MemberPropertyReference.Descriptor>
-      get() = declaredMemberProperties
-
-    override val declaredMemberProperties: List<MemberPropertyReference.Descriptor> by lazy(NONE) {
+    override val properties: List<MemberPropertyReference.Descriptor> by lazy(NONE) {
       clazz.unsubstitutedMemberScope
         .getDescriptorsFiltered(kindFilter = DescriptorKindFilter.VARIABLES)
         .filterIsInstance<PropertyDescriptor>()
