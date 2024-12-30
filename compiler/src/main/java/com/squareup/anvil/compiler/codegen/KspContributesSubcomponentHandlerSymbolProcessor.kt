@@ -408,8 +408,8 @@ internal class KspContributesSubcomponentHandlerSymbolProcessor(
 
             if (returnTypeToCheck != null) {
               val returnTypeClassName = returnTypeToCheck.resolveKSClassDeclaration()?.toClassName()
-              returnTypeClassName == contributionClassName
-                || returnTypeToCheck.isAssignableFrom(contribution.clazz.asType(emptyList()))
+              returnTypeClassName == contributionClassName ||
+                returnTypeToCheck.isAssignableFrom(contribution.clazz.asType(emptyList()))
             } else {
               false
             }
